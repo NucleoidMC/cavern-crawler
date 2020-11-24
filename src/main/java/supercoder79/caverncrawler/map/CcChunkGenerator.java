@@ -25,8 +25,11 @@ import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.StructuresConfig;
 
 public class CcChunkGenerator extends GameChunkGenerator {
+	private final long seed;
 	public CcChunkGenerator(MinecraftServer server) {
 		super(createBiomeSource(server, BiomeKeys.PLAINS), new StructuresConfig(Optional.empty(), Collections.emptyMap()));
+
+		this.seed = new Random().nextLong();
 	}
 
 	@Override
@@ -79,7 +82,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 
 		for(int localChunkX = chunkX - 8; localChunkX <= chunkX + 8; ++localChunkX) {
 			for(int localChunkZ = chunkZ - 8; localChunkZ <= chunkZ + 8; ++localChunkZ) {
-				chunkRandom.setCarverSeed(seed, localChunkX, localChunkZ);
+				chunkRandom.setCarverSeed(this.seed, localChunkX, localChunkZ);
 
 				if (CaveCarver.INSTANCE.shouldCarve(chunkRandom, localChunkX, localChunkZ)) {
 					CaveCarver.INSTANCE.carve(chunk, biomeAccess::getBiome, chunkRandom, this.getSeaLevel(), localChunkX, localChunkZ, chunkX, chunkZ, bitSet);
