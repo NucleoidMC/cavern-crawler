@@ -1,16 +1,14 @@
 package supercoder79.caverncrawler.game;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import supercoder79.caverncrawler.map.CcMap;
-import xyz.nucleoid.plasmid.game.GameWorld;
+import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.event.BreakBlockListener;
 import xyz.nucleoid.plasmid.game.event.GameOpenListener;
 import xyz.nucleoid.plasmid.game.event.GameTickListener;
 import xyz.nucleoid.plasmid.game.event.OfferPlayerListener;
 import xyz.nucleoid.plasmid.game.event.UseBlockListener;
 import xyz.nucleoid.plasmid.game.player.JoinResult;
+import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
 import xyz.nucleoid.plasmid.game.rule.RuleResult;
 
@@ -21,22 +19,22 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 
 public class CcActive {
-	public final GameWorld world;
+	public final GameSpace space;
 	public final CcMap map;
 	public final CcConfig config;
-	private final Set<ServerPlayerEntity> participants;
+	private final PlayerSet participants;
 
-	private CcActive(GameWorld world, CcMap map, CcConfig config, Set<ServerPlayerEntity> participants) {
-		this.world = world;
+	private CcActive(GameSpace space, CcMap map, CcConfig config, PlayerSet participants) {
+		this.space = space;
 		this.map = map;
 		this.config = config;
 		this.participants = participants;
 	}
 
-	public static void open(GameWorld world, CcMap map, CcConfig config) {
-		CcActive active = new CcActive(world, map, config, new HashSet<>(world.getPlayers()));
+	public static void open(GameSpace space, CcMap map, CcConfig config) {
+		CcActive active = new CcActive(space, map, config, space.getPlayers());
 
-		world.openGame(game -> {
+		space.openGame(game -> {
 			game.setRule(GameRule.CRAFTING, RuleResult.DENY);
 			game.setRule(GameRule.PORTALS, RuleResult.DENY);
 			game.setRule(GameRule.PVP, RuleResult.DENY);

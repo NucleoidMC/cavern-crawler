@@ -1,5 +1,6 @@
 {
   "type": "caverncrawler:caverncrawler",
+  "name": "Cavern Crawler",
   "players": {
     "min": 1,
     "max": 16,
