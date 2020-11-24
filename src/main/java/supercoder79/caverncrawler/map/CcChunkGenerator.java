@@ -1,9 +1,11 @@
 package supercoder79.caverncrawler.map;
 
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Random;
 
+import supercoder79.caverncrawler.map.carver.CaveCarver;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
 import net.minecraft.block.BlockState;
@@ -11,10 +13,13 @@ import net.minecraft.block.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ProtoChunk;
+import net.minecraft.world.gen.ChunkRandom;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.StructuresConfig;
@@ -65,6 +70,46 @@ public class CcChunkGenerator extends GameChunkGenerator {
 
 	@Override
 	public void carve(long seed, BiomeAccess access, Chunk chunk, GenerationStep.Carver carver) {
+		BiomeAccess biomeAccess = access.withSource(this.populationSource);
+		ChunkRandom chunkRandom = new ChunkRandom();
+		ChunkPos chunkPos = chunk.getPos();
+		int chunkX = chunkPos.x;
+		int chunkZ = chunkPos.z;
+		BitSet bitSet = ((ProtoChunk)chunk).getOrCreateCarvingMask(carver);
 
+		for(int localChunkX = chunkX - 8; localChunkX <= chunkX + 8; ++localChunkX) {
+			for(int localChunkZ = chunkZ - 8; localChunkZ <= chunkZ + 8; ++localChunkZ) {
+				chunkRandom.setCarverSeed(seed, localChunkX, localChunkZ);
+
+				if (CaveCarver.INSTANCE.shouldCarve(chunkRandom, localChunkX, localChunkZ)) {
+					CaveCarver.INSTANCE.carve(chunk, biomeAccess::getBiome, chunkRandom, this.getSeaLevel(), localChunkX, localChunkZ, chunkX, chunkZ, bitSet);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void generateFeatures(ChunkRegion region, StructureAccessor structures) {
+		int chunkX = region.getCenterChunkX();
+		int chunkZ = region.getCenterChunkZ();
+
+		if (chunkX == 0 && chunkZ == 0) {
+			BlockPos.Mutable mutable = new BlockPos.Mutable();
+			for (int x = 0; x < 16; x++) {
+				mutable.setX(chunkX * 16 + x);
+
+			    for (int z = 0; z < 16; z++) {
+			    	mutable.setZ(chunkZ * 16 + z);
+
+					for (int y = 48; y <= 56; y++) {
+						mutable.setY(y);
+						if (region.getBlockState(mutable).isAir()) {
+							region.setBlockState(mutable, Blocks.STONE.getDefaultState(), 3);
+						}
+					}
+			    }
+			}
+		}
 	}
 }
