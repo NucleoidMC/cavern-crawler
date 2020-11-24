@@ -59,12 +59,6 @@ public final class CcWaiting {
 			game.setRule(GameRule.HUNGER, RuleResult.DENY);
 			game.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
 
-			game.setRule(GameRule.CRAFTING, RuleResult.DENY);
-			game.setRule(GameRule.PORTALS, RuleResult.DENY);
-			game.setRule(GameRule.PVP, RuleResult.DENY);
-			game.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
-			game.setRule(GameRule.HUNGER, RuleResult.DENY);
-
 			game.on(RequestStartListener.EVENT, waiting::requestStart);
 
 			game.on(PlayerAddListener.EVENT, waiting::addPlayer);
