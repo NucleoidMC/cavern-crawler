@@ -1,0 +1,8 @@
+{
+  "type": "caverncrawler:caverncrawler",
+  "players": {
+    "min": 1,
+    "max": 16,
+    "threshold": 4
+  }
+}
