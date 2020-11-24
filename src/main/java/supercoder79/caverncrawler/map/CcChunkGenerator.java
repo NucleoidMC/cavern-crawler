@@ -46,11 +46,12 @@ public class CcChunkGenerator extends GameChunkGenerator {
 						state = Blocks.BEDROCK.getDefaultState();
 					}
 
-					if (isSpawn && (y > 56 && y < 72)) {
+					if (isSpawn && (y > 56 && y < 64)) {
 						state = Blocks.AIR.getDefaultState();
 					}
 
-					if (isSpawn && (y == 55 || y == 73)) {
+					// TODO: glowstone on sides of walls
+					if (isSpawn && (y == 56 || y == 64)) {
 						if (random.nextInt(5) == 0) {
 							state = Blocks.GLOWSTONE.getDefaultState();
 						}
