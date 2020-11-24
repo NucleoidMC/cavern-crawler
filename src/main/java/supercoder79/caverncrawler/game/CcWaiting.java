@@ -83,11 +83,26 @@ public final class CcWaiting {
 	}
 
 	private void spawnPlayer(ServerPlayerEntity player) {
+		resetPlayer(player);
+
 		ServerWorld world = this.world.getWorld();
 
 		ChunkPos chunkPos = new ChunkPos(0, 0);
 		world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
 
 		player.teleport(world, 8, 59, 8, 0.0F, 0.0F);
+	}
+
+	public static void resetPlayer(ServerPlayerEntity player) {
+		player.inventory.clear();
+		player.getEnderChestInventory().clear();
+		player.clearStatusEffects();
+		player.setHealth(20.0F);
+		player.getHungerManager().setFoodLevel(20);
+		player.getHungerManager().add(5, 0.5F);
+		player.fallDistance = 0.0F;
+		player.setGameMode(GameMode.SURVIVAL);
+		player.setExperienceLevel(0);
+		player.setExperiencePoints(0);
 	}
 }
