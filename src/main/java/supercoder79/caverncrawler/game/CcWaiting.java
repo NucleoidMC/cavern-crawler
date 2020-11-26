@@ -81,7 +81,7 @@ public final class CcWaiting {
 	}
 
 	private void spawnPlayer(ServerPlayerEntity player) {
-		resetPlayer(player);
+		resetPlayer(player, GameMode.ADVENTURE);
 
 		ServerWorld world = this.world.getWorld();
 
@@ -91,7 +91,7 @@ public final class CcWaiting {
 		player.teleport(world, 8, 59, 8, 0.0F, 0.0F);
 	}
 
-	public static void resetPlayer(ServerPlayerEntity player) {
+	public static void resetPlayer(ServerPlayerEntity player, GameMode mode) {
 		player.inventory.clear();
 		player.getEnderChestInventory().clear();
 		player.clearStatusEffects();
@@ -99,7 +99,7 @@ public final class CcWaiting {
 		player.getHungerManager().setFoodLevel(20);
 		player.getHungerManager().add(5, 0.5F);
 		player.fallDistance = 0.0F;
-		player.setGameMode(GameMode.SURVIVAL);
+		player.setGameMode(mode);
 		player.setExperienceLevel(0);
 		player.setExperiencePoints(0);
 	}
