@@ -82,8 +82,8 @@ public class CaveCarver extends Carver<ProbabilityConfig> {
 			pitchScale += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 2.0F;
 			yawScale += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 4.0F;
 			if (branch == nextBranch && width > 1.0F) {
-				this.carveTunnels(chunk, postToBiome, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, x, y, z, random.nextFloat() * 0.5F + 0.5F, yaw - 1.5707964F, pitch / 3.0F, branch, branchCount, 1.0D, carvingMask);
-				this.carveTunnels(chunk, postToBiome, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, x, y, z, random.nextFloat() * 0.5F + 0.5F, yaw + 1.5707964F, pitch / 3.0F, branch, branchCount, 1.0D, carvingMask);
+				this.carveTunnels(chunk, postToBiome, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, x, y, z, random.nextFloat() * 0.65F + 0.5F, yaw - 1.5707964F, pitch / 3.0F, branch, branchCount, 1.0D, carvingMask);
+				this.carveTunnels(chunk, postToBiome, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, x, y, z, random.nextFloat() * 0.65F + 0.5F, yaw + 1.5707964F, pitch / 3.0F, branch, branchCount, 1.0D, carvingMask);
 				return;
 			}
 
