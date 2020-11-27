@@ -116,6 +116,13 @@ public class CcChunkGenerator extends GameChunkGenerator {
 							region.setBlockState(mutable, Blocks.STONE.getDefaultState(), 3);
 						}
 					}
+
+					for (int y = 64; y <= 72; y++) {
+						mutable.setY(y);
+						if (region.getBlockState(mutable).isAir()) {
+							region.setBlockState(mutable, Blocks.STONE.getDefaultState(), 3);
+						}
+					}
 			    }
 			}
 		}

@@ -18,13 +18,23 @@ public class CaveCarver extends Carver<ProbabilityConfig> {
 		super(ProbabilityConfig.CODEC, 256);
 	}
 
-	public boolean shouldCarve(Random random, int i, int j, ProbabilityConfig probabilityConfig) {
+	public boolean shouldCarve(Random random, int chunkX, int chunkZ, ProbabilityConfig probabilityConfig) {
+		// Force cave at spawn
+		if (chunkX == 0 && chunkZ == 0) {
+			return true;
+		}
+
 		return random.nextFloat() <= probabilityConfig.probability;
 	}
 
 	public boolean carve(Chunk chunk, Function<BlockPos, Biome> function, Random random, int seaLevel, int chunkX, int chunkZ, int mainChunkX, int mainChunkZ, BitSet bitSet, ProbabilityConfig probabilityConfig) {
 		int branchFactor = (this.getBranchFactor() * 2 - 1) * 16;
 		int caveCount = random.nextInt(random.nextInt(random.nextInt(this.getMaxCaveCount()) + 1) + 1);
+
+		// Force a cave at spawn
+		if (mainChunkX == 0 && mainChunkZ == 0) {
+			this.carveTunnels(chunk, function, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, 8, 60, 8, 0.8f + ((random.nextFloat() - 0.5f) * 0.2f), random.nextFloat() * 6.2831855F, 0, 0, branchFactor - random.nextInt(branchFactor / 4), this.getTunnelSystemHeightWidthRatio(), bitSet);
+		}
 
 		for(int i = 0; i < caveCount; ++i) {
 			double x = chunkX * 16 + random.nextInt(16);

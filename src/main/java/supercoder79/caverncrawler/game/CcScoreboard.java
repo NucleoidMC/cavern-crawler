@@ -13,7 +13,7 @@ public class CcScoreboard {
     private final SidebarWidget sidebar;
 
     public CcScoreboard(GlobalWidgets widgets) {
-        Text title = new LiteralText("").formatted(Formatting.GOLD, Formatting.BOLD);
+        Text title = new LiteralText("Cavern Crawler").formatted(Formatting.GOLD, Formatting.BOLD);
         this.sidebar = widgets.addSidebar(title);
     }
 
@@ -21,11 +21,12 @@ public class CcScoreboard {
         this.sidebar.set(content -> {
             for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet()) {
                 String line = String.format(
-                        "%s%s:%s %d points",
+                        "%s%s:%s %d point%s",
                         Formatting.AQUA,
                         entry.getKey().getEntityName(),
                         Formatting.RESET,
-                        entry.getValue()
+                        entry.getValue(),
+                        entry.getValue() == 1 ? "" : "s"
                 );
                 content.writeLine(line);
             }
