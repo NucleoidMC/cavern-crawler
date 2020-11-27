@@ -20,9 +20,12 @@ import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -37,6 +40,10 @@ public class CcActive {
 	public final Map<ServerPlayerEntity, Integer> pointMap = new HashMap<>();
 	private final PlayerSet participants;
 	private final CcScoreboard scoreboard;
+	private final int endingTick;
+	private final int closingTick;
+	private int ticks = 0;
+	private boolean closingText = false;
 
 	private CcActive(GameSpace space, CcMap map, CcConfig config, PlayerSet participants, GlobalWidgets widgets) {
 		this.space = space;
@@ -44,6 +51,8 @@ public class CcActive {
 		this.config = config;
 		this.participants = participants;
 		this.scoreboard = new CcScoreboard(widgets);
+		this.endingTick = 5 * 60 * 20; // 5 minutes
+		this.closingTick = this.endingTick + (10 * 20);
 	}
 
 	public static void open(GameSpace space, CcMap map, CcConfig config) {
@@ -75,14 +84,43 @@ public class CcActive {
 		for (ServerPlayerEntity player : this.participants) {
 			CcWaiting.resetPlayer(player, GameMode.SURVIVAL);
 
-			player.inventory.insertStack(0, ItemStackBuilder.of(Items.IRON_PICKAXE).setUnbreakable().build());
+			player.inventory.insertStack(0, ItemStackBuilder.of(Items.DIAMOND_PICKAXE).setUnbreakable().build());
 			player.inventory.insertStack(8, ItemStackBuilder.of(Items.TORCH).setCount(64).build());
 		}
 
-		this.scoreboard.update(this.pointMap);
+		this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
 	}
 
 	private void tick() {
+		this.ticks++;
+
+		if (this.ticks >= this.closingTick) {
+			this.space.close();
+		}
+
+		if (this.ticks >= this.endingTick) {
+			if (!this.closingText) {
+				this.closingText = true;
+
+				this.participants.forEach((player) -> CcWaiting.resetPlayer(player, GameMode.ADVENTURE));
+
+				ServerPlayerEntity maxPlayer = null;
+				int maxPoints = Integer.MIN_VALUE;
+
+				for (ServerPlayerEntity participant : this.participants) {
+					int points = this.pointMap.get(participant);
+
+					if (points > maxPoints) {
+						maxPoints = points;
+						maxPlayer = participant;
+					}
+				}
+
+				this.participants.sendMessage(new LiteralText(maxPlayer.getEntityName() + " won with " + maxPoints + " points!"));
+			}
+		} else {
+			this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
+		}
 	}
 
 	private ActionResult onUseBlock(ServerPlayerEntity playerEntity, Hand hand, BlockHitResult hitResult) {
@@ -99,7 +137,21 @@ public class CcActive {
 
 			this.pointMap.put(player, points);
 
-			this.scoreboard.update(this.pointMap);
+			this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
+		}
+
+		// Prevent players from farming ores by placing them and breaking them
+		if (state.isOf(Blocks.IRON_ORE) || state.isOf(Blocks.GOLD_ORE)) {
+			world.breakBlock(pos, false);
+
+			// I am in awe of my programming skills
+			if (state.isOf(Blocks.IRON_ORE)) {
+				world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.IRON_INGOT)));
+			} else {
+				world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.GOLD_INGOT)));
+			}
+
+			return ActionResult.FAIL;
 		}
 
 		return ActionResult.PASS;

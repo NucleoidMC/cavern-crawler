@@ -31,11 +31,6 @@ public class CaveCarver extends Carver<ProbabilityConfig> {
 		int branchFactor = (this.getBranchFactor() * 2 - 1) * 16;
 		int caveCount = random.nextInt(random.nextInt(random.nextInt(this.getMaxCaveCount()) + 1) + 1);
 
-		// Force a cave at spawn
-		if (mainChunkX == 0 && mainChunkZ == 0) {
-			this.carveTunnels(chunk, function, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, 8, 60, 8, 0.8f + ((random.nextFloat() - 0.5f) * 0.2f), random.nextFloat() * 6.2831855F, 0, 0, branchFactor - random.nextInt(branchFactor / 4), this.getTunnelSystemHeightWidthRatio(), bitSet);
-		}
-
 		for(int i = 0; i < caveCount; ++i) {
 			double x = chunkX * 16 + random.nextInt(16);
 			double y = this.getCaveY(random);

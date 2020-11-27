@@ -17,8 +17,12 @@ public class CcScoreboard {
         this.sidebar = widgets.addSidebar(title);
     }
 
-    public void update(Map<ServerPlayerEntity, Integer> points) {
+    public void update(int ticksRemaining, Map<ServerPlayerEntity, Integer> points) {
         this.sidebar.set(content -> {
+            int minutesRemaining = ticksRemaining / (20 * 60);
+            int secondsRemaining = (ticksRemaining / 20) - (minutesRemaining * 60);
+            content.writeLine(minutesRemaining + ":" + secondsRemaining + " remaining");
+
             for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet()) {
                 String line = String.format(
                         "%s%s:%s %d point%s",
