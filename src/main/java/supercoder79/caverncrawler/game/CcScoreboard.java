@@ -32,7 +32,7 @@ public class CcScoreboard {
                         entry.getValue(),
                         entry.getValue() == 1 ? "" : "s"
                 );
-                content.writeLine(line);
+                content.writeLine(line.substring(0, 16));
             }
         });
     }
