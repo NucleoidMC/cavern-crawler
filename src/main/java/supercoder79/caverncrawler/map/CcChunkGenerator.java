@@ -1,11 +1,14 @@
 package supercoder79.caverncrawler.map;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 import supercoder79.caverncrawler.map.carver.CaveCarver;
+import supercoder79.caverncrawler.map.carver.CaveRoomCarver;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
 import net.minecraft.block.BlockState;
@@ -21,19 +24,23 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ProtoChunk;
 import net.minecraft.world.gen.ChunkRandom;
 import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.world.gen.ProbabilityConfig;
 import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.chunk.StructuresConfig;
-import net.minecraft.world.gen.feature.ConfiguredFeatures;
 import net.minecraft.world.gen.feature.EmeraldOreFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 
 public class CcChunkGenerator extends GameChunkGenerator {
 	private final long seed;
+	private final List<ConfiguredCarver<ProbabilityConfig>> carvers = new ArrayList<>();
 	public CcChunkGenerator(MinecraftServer server) {
 		super(createBiomeSource(server, BiomeKeys.PLAINS), new StructuresConfig(Optional.empty(), Collections.emptyMap()));
 
 		this.seed = new Random().nextLong();
+		this.carvers.add(CaveCarver.INSTANCE);
+		this.carvers.add(CaveRoomCarver.INSTANCE);
 	}
 
 	@Override
@@ -76,20 +83,23 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	}
 
 	@Override
-	public void carve(long seed, BiomeAccess access, Chunk chunk, GenerationStep.Carver carver) {
+	public void carve(long seed, BiomeAccess access, Chunk chunk, GenerationStep.Carver step) {
 		BiomeAccess biomeAccess = access.withSource(this.populationSource);
 		ChunkRandom chunkRandom = new ChunkRandom();
 		ChunkPos chunkPos = chunk.getPos();
 		int chunkX = chunkPos.x;
 		int chunkZ = chunkPos.z;
-		BitSet bitSet = ((ProtoChunk)chunk).getOrCreateCarvingMask(carver);
+		BitSet bitSet = ((ProtoChunk)chunk).getOrCreateCarvingMask(step);
 
 		for(int localChunkX = chunkX - 8; localChunkX <= chunkX + 8; ++localChunkX) {
 			for(int localChunkZ = chunkZ - 8; localChunkZ <= chunkZ + 8; ++localChunkZ) {
-				chunkRandom.setCarverSeed(this.seed, localChunkX, localChunkZ);
+				for (int i = 0; i < this.carvers.size(); i++) {
+					chunkRandom.setCarverSeed(this.seed + i, localChunkX, localChunkZ);
 
-				if (CaveCarver.INSTANCE.shouldCarve(chunkRandom, localChunkX, localChunkZ)) {
-					CaveCarver.INSTANCE.carve(chunk, biomeAccess::getBiome, chunkRandom, this.getSeaLevel(), localChunkX, localChunkZ, chunkX, chunkZ, bitSet);
+					ConfiguredCarver<ProbabilityConfig> carver = this.carvers.get(i);
+					if (carver.shouldCarve(chunkRandom, localChunkX, localChunkZ)) {
+						carver.carve(chunk, biomeAccess::getBiome, chunkRandom, this.getSeaLevel(), localChunkX, localChunkZ, chunkX, chunkZ, bitSet);
+					}
 				}
 			}
 		}
@@ -128,42 +138,43 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			}
 		}
 
-		for (int i = 0; i < 16; i++) {
+		// TODO: refactor this hot mess
+		for (int i = 0; i < 24; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.COAL_ORE.getDefaultState(), 17));
 		}
 
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < 16; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.IRON_ORE.getDefaultState(), 9));
 		}
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 5; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.GOLD_ORE.getDefaultState(), 9));
 		}
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 10; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.REDSTONE_ORE.getDefaultState(), 8));
 		}
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.LAPIS_ORE.getDefaultState(), 7));
 		}
 
-		for (int i = 0; i < 3 + random.nextInt(6); i++) {
+		for (int i = 0; i < 4 + random.nextInt(8); i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);

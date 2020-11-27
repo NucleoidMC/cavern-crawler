@@ -18,13 +18,13 @@ public class CaveCarver extends Carver<ProbabilityConfig> {
 		super(ProbabilityConfig.CODEC, 256);
 	}
 
-	public boolean shouldCarve(Random random, int chunkX, int chunkZ, ProbabilityConfig probabilityConfig) {
+	public boolean shouldCarve(Random random, int chunkX, int chunkZ, ProbabilityConfig config) {
 		// Force cave at spawn
 		if (chunkX == 0 && chunkZ == 0) {
 			return true;
 		}
 
-		return random.nextFloat() <= probabilityConfig.probability;
+		return random.nextFloat() <= config.probability;
 	}
 
 	public boolean carve(Chunk chunk, Function<BlockPos, Biome> function, Random random, int seaLevel, int chunkX, int chunkZ, int mainChunkX, int mainChunkZ, BitSet bitSet, ProbabilityConfig probabilityConfig) {
