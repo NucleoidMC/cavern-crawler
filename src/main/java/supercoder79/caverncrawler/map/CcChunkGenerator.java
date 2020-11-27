@@ -24,6 +24,7 @@ import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
+import net.minecraft.world.gen.feature.EmeraldOreFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 
@@ -162,11 +163,16 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.LAPIS_ORE.getDefaultState(), 7));
 		}
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 3 + random.nextInt(6); i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(116) + 8;
 			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.DIAMOND_ORE.getDefaultState(), 8));
+			Feature.EMERALD_ORE.generate(region, this, random, new BlockPos(x, y, z), new EmeraldOreFeatureConfig(Blocks.STONE.getDefaultState(), Blocks.EMERALD_ORE.getDefaultState()));
 		}
+
+		int x = random.nextInt(16) + (chunkX * 16);
+		int y = random.nextInt(116) + 8;
+		int z = random.nextInt(16) + (chunkZ * 16);
+		Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.DIAMOND_ORE.getDefaultState(), 8));
 	}
 }
