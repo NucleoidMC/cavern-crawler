@@ -21,10 +21,10 @@ public class CaveRoomCarver extends Carver<ProbabilityConfig> {
 	@Override
 	public boolean carve(Chunk chunk, Function<BlockPos, Biome> posToBiome, Random random, int seaLevel, int chunkX, int chunkZ, int mainChunkX, int mainChunkZ, BitSet carvingMask, ProbabilityConfig carverConfig) {
 		double x = chunkX * 16 + random.nextInt(16);
-		double y = random.nextInt(80) + 40;
+		double y = random.nextInt(50) + 40;
 		double z = chunkZ * 16 + random.nextInt(16);
 
-		double yaw = random.nextDouble() * 4 + 22;
+		double yaw = random.nextDouble() * 4 + 16;
 		double pitch = yaw * (0.5 + (random.nextDouble() * 0.2));
 
 		this.carveRegion(chunk, posToBiome, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, x, y, z, yaw, pitch, carvingMask);
