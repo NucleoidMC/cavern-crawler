@@ -84,9 +84,12 @@ public class CcActive {
 		for (ServerPlayerEntity player : this.participants) {
 			CcWaiting.resetPlayer(player, GameMode.SURVIVAL);
 
-			player.inventory.insertStack(0, ItemStackBuilder.of(Items.DIAMOND_PICKAXE).setUnbreakable().build());
+			player.inventory.insertStack(0, ItemStackBuilder.of(Items.NETHERITE_PICKAXE).setUnbreakable().build());
 			player.inventory.insertStack(8, ItemStackBuilder.of(Items.TORCH).setCount(64).build());
 		}
+
+		this.participants.sendMessage(new LiteralText("Welcome to Cavern Crawler! The goal of the game is to mine as many ores as possible."));
+		this.participants.sendMessage(new LiteralText("The player with the most points at the end wins. Type /ccpoints to get a list of ores and the points that they give you."));
 
 		this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
 	}

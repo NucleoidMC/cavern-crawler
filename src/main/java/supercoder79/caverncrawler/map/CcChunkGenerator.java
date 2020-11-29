@@ -140,6 +140,62 @@ public class CcChunkGenerator extends GameChunkGenerator {
 					}
 			    }
 			}
+		} else {
+			if (chunkX == 0) {
+				if (Math.abs(chunkZ) <= 3) {
+					BlockPos.Mutable mutable = new BlockPos.Mutable();
+					for (int x = 7; x <= 8; x++) {
+						mutable.setX(chunkX * 16 + x);
+
+						for (int z = 0; z < 16; z++) {
+							mutable.setZ(chunkZ * 16 + z);
+
+							for (int y = 57; y <= 60; y++) {
+								mutable.setY(y);
+								BlockState state = Blocks.AIR.getDefaultState();
+
+								if (y == 60 && region.getBlockState(mutable).isOpaque()) {
+									state = Blocks.STONE.getDefaultState();
+
+									if (random.nextInt(6) == 0) {
+										state = Blocks.GLOWSTONE.getDefaultState();
+									}
+								}
+
+								region.setBlockState(mutable, state, 3);
+							}
+						}
+					}
+				}
+			}
+
+			if (chunkZ == 0) {
+				if (Math.abs(chunkX) <= 3) {
+					BlockPos.Mutable mutable = new BlockPos.Mutable();
+					for (int x = 0; x < 16; x++) {
+						mutable.setX(chunkX * 16 + x);
+
+						for (int z = 7; z <= 8; z++) {
+							mutable.setZ(chunkZ * 16 + z);
+
+							for (int y = 57; y <= 60; y++) {
+								mutable.setY(y);
+								BlockState state = Blocks.AIR.getDefaultState();
+
+								if (y == 60 && region.getBlockState(mutable).isOpaque()) {
+									state = Blocks.STONE.getDefaultState();
+
+									if (random.nextInt(6) == 0) {
+										state = Blocks.GLOWSTONE.getDefaultState();
+									}
+								}
+
+								region.setBlockState(mutable, state, 3);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		// TODO: refactor this hot mess

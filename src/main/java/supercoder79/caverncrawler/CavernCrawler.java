@@ -1,5 +1,6 @@
 package supercoder79.caverncrawler;
 
+import supercoder79.caverncrawler.command.PointsCommand;
 import supercoder79.caverncrawler.game.CcConfig;
 import supercoder79.caverncrawler.game.CcWaiting;
 import xyz.nucleoid.plasmid.game.GameType;
@@ -16,5 +17,7 @@ public class CavernCrawler implements ModInitializer {
 				CcWaiting::open,
 				CcConfig.CODEC
 		);
+
+		PointsCommand.init();
 	}
 }
