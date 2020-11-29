@@ -7,7 +7,9 @@ import net.minecraft.util.Formatting;
 import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 import xyz.nucleoid.plasmid.widget.SidebarWidget;
 
+import java.util.Comparator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CcScoreboard {
     private final SidebarWidget sidebar;
@@ -23,16 +25,20 @@ public class CcScoreboard {
             int secondsRemaining = (ticksRemaining / 20) - (minutesRemaining * 60);
             content.writeLine(minutesRemaining + ":" + secondsRemaining + " remaining");
 
-            for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet()) {
+            int count = 0;
+            for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList())) {
+                if (count == 15) {
+                    break;
+                }
+
                 String line = String.format(
-                        "%s%s:%s %d point%s",
-                        Formatting.AQUA,
+                        "%s: %d",
                         entry.getKey().getEntityName(),
-                        Formatting.RESET,
-                        entry.getValue(),
-                        entry.getValue() == 1 ? "" : "s"
+                        entry.getValue()
                 );
-                content.writeLine(line.substring(0, 16));
+                content.writeLine(line);
+
+                count++;
             }
         });
     }

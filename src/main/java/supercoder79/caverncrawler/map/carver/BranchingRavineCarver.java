@@ -63,9 +63,9 @@ public class BranchingRavineCarver extends Carver<ProbabilityConfig> {
          scale3dPitch *= (double)random.nextFloat() * 0.25D + 0.75D;
          float deltaXZ = MathHelper.cos(pitch);
          float deltaY = MathHelper.sin(pitch);
-         x += (double)(MathHelper.cos(yaw) * deltaXZ);
-         y += (double) deltaY;
-         z += (double)(MathHelper.sin(yaw) * deltaXZ);
+         x += MathHelper.cos(yaw) * deltaXZ;
+         y += deltaY;
+         z += MathHelper.sin(yaw) * deltaXZ;
          pitch *= 0.7F;
          pitch += pitchScale * 0.05F;
          yaw += yawScale * 0.05F;
