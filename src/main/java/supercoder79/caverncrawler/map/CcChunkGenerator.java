@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import supercoder79.caverncrawler.map.carver.BranchingRavineCarver;
 import supercoder79.caverncrawler.map.carver.CaveCarver;
 import supercoder79.caverncrawler.map.carver.CaveRoomCarver;
 import supercoder79.caverncrawler.map.carver.HorizontalCarver;
@@ -43,6 +44,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 		this.carvers.add(CaveCarver.INSTANCE);
 		this.carvers.add(CaveRoomCarver.INSTANCE);
 		this.carvers.add(HorizontalCarver.INSTANCE);
+		this.carvers.add(BranchingRavineCarver.INSTANCE);
 	}
 
 	@Override

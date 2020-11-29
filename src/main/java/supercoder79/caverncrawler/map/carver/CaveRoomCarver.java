@@ -24,7 +24,7 @@ public class CaveRoomCarver extends Carver<ProbabilityConfig> {
 		double y = random.nextInt(50) + 40;
 		double z = chunkZ * 16 + random.nextInt(16);
 
-		double yaw = random.nextDouble() * 4 + 16;
+		double yaw = random.nextDouble() * 8 + 12;
 		double pitch = yaw * (0.5 + (random.nextDouble() * 0.2));
 
 		this.carveRegion(chunk, posToBiome, random.nextLong(), seaLevel, mainChunkX, mainChunkZ, x, y, z, yaw, pitch, carvingMask);

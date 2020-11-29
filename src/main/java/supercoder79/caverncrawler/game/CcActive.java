@@ -108,11 +108,13 @@ public class CcActive {
 				int maxPoints = Integer.MIN_VALUE;
 
 				for (ServerPlayerEntity participant : this.participants) {
-					int points = this.pointMap.get(participant);
+					if (this.pointMap.containsKey(participant)) {
+						int points = this.pointMap.get(participant);
 
-					if (points > maxPoints) {
-						maxPoints = points;
-						maxPlayer = participant;
+						if (points > maxPoints) {
+							maxPoints = points;
+							maxPlayer = participant;
+						}
 					}
 				}
 
