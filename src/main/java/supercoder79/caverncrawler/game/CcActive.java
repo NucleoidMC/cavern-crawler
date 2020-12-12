@@ -95,6 +95,7 @@ public class CcActive {
 
 		this.participants.sendMessage(new LiteralText("Welcome to Cavern Crawler! The goal of the game is to mine as many ores as possible."));
 		this.participants.sendMessage(new LiteralText("The player with the most points at the end wins. Type /ccpoints to get a list of ores and the points that they give you."));
+		this.participants.sendMessage(new LiteralText("All ores can spawn at any height, so just mine anywhere and you may find what you're looking for!"));
 
 		this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
 	}

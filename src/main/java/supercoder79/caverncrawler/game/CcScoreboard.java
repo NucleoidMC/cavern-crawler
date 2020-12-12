@@ -23,7 +23,9 @@ public class CcScoreboard {
         this.sidebar.set(content -> {
             int minutesRemaining = ticksRemaining / (20 * 60);
             int secondsRemaining = (ticksRemaining / 20) - (minutesRemaining * 60);
-            content.writeLine(minutesRemaining + ":" + secondsRemaining + " remaining");
+            String formattedSeconds = secondsRemaining < 10 ? "0" + secondsRemaining : String.valueOf(secondsRemaining);
+
+            content.writeLine(minutesRemaining + ":" + formattedSeconds + " remaining");
 
             int count = 0;
             for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList())) {
