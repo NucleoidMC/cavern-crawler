@@ -164,6 +164,14 @@ public class CcActive {
 			return ActionResult.FAIL;
 		}
 
+		// Drop torches along with coal
+		if (state.isOf(Blocks.COAL_ORE)) {
+			int count = world.random.nextInt(3);
+
+			world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.TORCH, count)));
+
+		}
+
 		return ActionResult.PASS;
 	}
 
