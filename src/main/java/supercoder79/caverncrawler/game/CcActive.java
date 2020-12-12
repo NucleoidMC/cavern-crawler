@@ -5,11 +5,7 @@ import java.util.Map;
 
 import supercoder79.caverncrawler.map.CcMap;
 import xyz.nucleoid.plasmid.game.GameSpace;
-import xyz.nucleoid.plasmid.game.event.BreakBlockListener;
-import xyz.nucleoid.plasmid.game.event.GameOpenListener;
-import xyz.nucleoid.plasmid.game.event.GameTickListener;
-import xyz.nucleoid.plasmid.game.event.OfferPlayerListener;
-import xyz.nucleoid.plasmid.game.event.UseBlockListener;
+import xyz.nucleoid.plasmid.game.event.*;
 import xyz.nucleoid.plasmid.game.player.JoinResult;
 import xyz.nucleoid.plasmid.game.player.PlayerSet;
 import xyz.nucleoid.plasmid.game.rule.GameRule;
@@ -20,7 +16,10 @@ import xyz.nucleoid.plasmid.widget.GlobalWidgets;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -74,6 +73,8 @@ public class CcActive {
 			game.on(BreakBlockListener.EVENT, active::onBreak);
 			game.on(UseBlockListener.EVENT, active::onUseBlock);
 
+			game.on(GameCloseListener.EVENT, active::onClose);
+
 			game.on(GameTickListener.EVENT, active::tick);
 		});
 	}
@@ -84,8 +85,12 @@ public class CcActive {
 		for (ServerPlayerEntity player : this.participants) {
 			CcWaiting.resetPlayer(player, GameMode.SURVIVAL);
 
-			player.inventory.insertStack(0, ItemStackBuilder.of(Items.NETHERITE_PICKAXE).setUnbreakable().build());
-			player.inventory.insertStack(8, ItemStackBuilder.of(Items.TORCH).setCount(64).build());
+			player.inventory.insertStack(0, ItemStackBuilder.of(Items.NETHERITE_PICKAXE)
+					.addEnchantment(Enchantments.EFFICIENCY, 5)
+					.setUnbreakable().build());
+			player.inventory.offHand.set(0, ItemStackBuilder.of(Items.TORCH).setCount(64).build());
+
+			player.addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, 20 * 60 * 10, 1, false, false));
 		}
 
 		this.participants.sendMessage(new LiteralText("Welcome to Cavern Crawler! The goal of the game is to mine as many ores as possible."));
@@ -160,6 +165,12 @@ public class CcActive {
 		}
 
 		return ActionResult.PASS;
+	}
+
+	void onClose() {
+		for (ServerPlayerEntity participant : this.participants) {
+			participant.clearStatusEffects();
+		}
 	}
 
 	static {
