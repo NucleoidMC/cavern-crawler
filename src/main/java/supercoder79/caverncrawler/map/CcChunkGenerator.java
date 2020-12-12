@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import supercoder79.caverncrawler.map.carver.BranchingRavineCarver;
-import supercoder79.caverncrawler.map.carver.CaveCarver;
-import supercoder79.caverncrawler.map.carver.CaveRoomCarver;
-import supercoder79.caverncrawler.map.carver.HorizontalCarver;
+import supercoder79.caverncrawler.map.carver.*;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
 import net.minecraft.block.BlockState;
@@ -45,6 +42,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 		this.carvers.add(CaveRoomCarver.INSTANCE);
 		this.carvers.add(HorizontalCarver.INSTANCE);
 		this.carvers.add(BranchingRavineCarver.INSTANCE);
+		this.carvers.add(VerticalCarver.INSTANCE);
 	}
 
 	@Override
