@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import supercoder79.caverncrawler.map.CcMap;
+import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
 import xyz.nucleoid.plasmid.game.event.*;
 import xyz.nucleoid.plasmid.game.player.JoinResult;
@@ -18,6 +19,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
@@ -73,6 +75,8 @@ public class CcActive {
 			game.on(BreakBlockListener.EVENT, active::onBreak);
 			game.on(UseBlockListener.EVENT, active::onUseBlock);
 
+			game.on(PlayerDamageListener.EVENT, active::onDamage);
+
 			game.on(GameCloseListener.EVENT, active::onClose);
 
 			game.on(GameTickListener.EVENT, active::tick);
@@ -104,14 +108,15 @@ public class CcActive {
 		this.ticks++;
 
 		if (this.ticks >= this.closingTick) {
-			this.space.close();
+			this.space.close(GameCloseReason.FINISHED);
 		}
 
 		if (this.ticks >= this.endingTick) {
 			if (!this.closingText) {
 				this.closingText = true;
 
-				this.participants.forEach((player) -> CcWaiting.resetPlayer(player, GameMode.ADVENTURE));
+				this.participants.forEach((player) -> CcWaiting.resetPlayer(player, GameMode.SPECTATOR));
+				this.participants.forEach((player) -> participants.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 20 * 10, 0, false, false)));
 
 				ServerPlayerEntity maxPlayer = null;
 				int maxPoints = Integer.MIN_VALUE;
@@ -132,6 +137,10 @@ public class CcActive {
 		} else {
 			this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
 		}
+	}
+
+	ActionResult onDamage(ServerPlayerEntity player, DamageSource source, float amount) {
+		return ActionResult.FAIL;
 	}
 
 	private ActionResult onUseBlock(ServerPlayerEntity playerEntity, Hand hand, BlockHitResult hitResult) {
