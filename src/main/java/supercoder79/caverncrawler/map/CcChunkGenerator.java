@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import supercoder79.caverncrawler.map.carver.*;
+import supercoder79.caverncrawler.map.gen.GeodeGen;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
 
 import net.minecraft.block.BlockState;
@@ -194,6 +195,13 @@ public class CcChunkGenerator extends GameChunkGenerator {
 					}
 				}
 			}
+		}
+
+		if (chunkX != 0 && chunkZ != 0 && random.nextInt(3) == 0) {
+			int x = random.nextInt(16) + (chunkX * 16);
+			int y = random.nextInt(80) + 20;
+			int z = random.nextInt(16) + (chunkZ * 16);
+			GeodeGen.INSTANCE.generate(region, new BlockPos(x, y, z), random);
 		}
 
 		// TODO: refactor this hot mess

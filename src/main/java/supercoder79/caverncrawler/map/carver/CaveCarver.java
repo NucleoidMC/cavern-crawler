@@ -13,7 +13,7 @@ import net.minecraft.world.gen.carver.Carver;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 public class CaveCarver extends Carver<ProbabilityConfig> {
-	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new CaveCarver(), new ProbabilityConfig(0.1f));
+	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new CaveCarver(), new ProbabilityConfig(1 / 6.f));
 	public CaveCarver() {
 		super(ProbabilityConfig.CODEC, 256);
 	}

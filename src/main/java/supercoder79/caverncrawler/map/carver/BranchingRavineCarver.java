@@ -13,7 +13,7 @@ import net.minecraft.world.gen.carver.Carver;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 public class BranchingRavineCarver extends Carver<ProbabilityConfig> {
-   public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new BranchingRavineCarver(), new ProbabilityConfig(1 / 50.f));
+   public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new BranchingRavineCarver(), new ProbabilityConfig(1 / 40.f));
 
    private final float[] heightToHorizontalStretchFactor = new float[1024];
 

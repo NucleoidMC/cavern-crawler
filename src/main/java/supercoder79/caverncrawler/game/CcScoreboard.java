@@ -28,7 +28,7 @@ public class CcScoreboard {
             content.writeLine(minutesRemaining + ":" + formattedSeconds + " remaining");
 
             int count = 0;
-            for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList())) {
+            for (Map.Entry<ServerPlayerEntity, Integer> entry : points.entrySet()) {
                 if (count == 15) {
                     break;
                 }
