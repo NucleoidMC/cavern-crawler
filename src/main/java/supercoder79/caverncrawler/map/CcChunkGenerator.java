@@ -197,7 +197,22 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			}
 		}
 
-		if (chunkX != 0 && chunkZ != 0 && random.nextInt(3) == 0) {
+		if (Math.abs(chunkX) <= 1 && Math.abs(chunkZ) <= 1) {
+			for (int x = -1; x <= 16; x++) {
+				for (int z = -1; z <= 16; z++) {
+					if (x == -1 || x == 16 || z == -1 || z == 16) {
+						for (int y = 57; y <= 60; y++) {
+							BlockPos local = new BlockPos(x, y, z);
+							if (region.getBlockState(local).isAir()) {
+								region.setBlockState(local, Blocks.BARRIER.getDefaultState(), 3);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (Math.abs(chunkX) >= 1 && Math.abs(chunkZ) >= 1 && random.nextInt(3) == 0) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(80) + 20;
 			int z = random.nextInt(16) + (chunkZ * 16);

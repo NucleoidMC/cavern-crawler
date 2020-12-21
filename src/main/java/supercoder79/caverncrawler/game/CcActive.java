@@ -1,6 +1,7 @@
 package supercoder79.caverncrawler.game;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import supercoder79.caverncrawler.map.CcMap;
@@ -102,6 +103,20 @@ public class CcActive {
 		this.participants.sendMessage(new LiteralText("All ores can spawn at any height, so just mine anywhere and you may find what you're looking for!"));
 
 		this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
+
+		// Replace barriers with air
+		for (int x = -1; x <= 16; x++) {
+			for (int z = -1; z <= 16; z++) {
+				if (x == -1 || x == 16 || z == -1 || z == 16) {
+					for (int y = 57; y <= 60; y++) {
+						BlockPos local = new BlockPos(x, y, z);
+						if (space.getWorld().getBlockState(local).isOf(Blocks.BARRIER)) {
+							space.getWorld().setBlockState(local, Blocks.AIR.getDefaultState(), 3);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void tick() {
@@ -179,7 +194,6 @@ public class CcActive {
 			int count = world.random.nextInt(3);
 
 			world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.TORCH, count)));
-
 		}
 
 		return ActionResult.PASS;
