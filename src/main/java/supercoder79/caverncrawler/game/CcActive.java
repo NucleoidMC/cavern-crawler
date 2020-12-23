@@ -131,7 +131,7 @@ public class CcActive {
 				this.closingText = true;
 
 				this.participants.forEach((player) -> CcWaiting.resetPlayer(player, GameMode.SPECTATOR));
-				this.participants.forEach((player) -> participants.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 20 * 10, 0, false, false)));
+				this.participants.forEach((player) -> participants.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 20 * 100, 0, false, false)));
 
 				ServerPlayerEntity maxPlayer = null;
 				int maxPoints = Integer.MIN_VALUE;

@@ -150,7 +150,7 @@ public class GeodeGen implements MapGen {
 					} else if (generationDistance >= fillingThreshold) {
 						world.setBlockState(currentPos, Blocks.AIR.getDefaultState(), 2);
 					} else if (generationDistance >= innerLayerThreshold) {
-						// Generate inner layer, or use alternate inner layer (growth block) if the chance check succeeds.
+						// Generate inner layer, or use alternate inner layer (ore block) if the chance check succeeds.
 
 						boolean useAlternateInnerLayer = (double)random.nextFloat() < 0.05;
 						if (useAlternateInnerLayer) {
