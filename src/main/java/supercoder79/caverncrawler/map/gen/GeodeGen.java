@@ -7,25 +7,22 @@ import java.util.Random;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import supercoder79.caverncrawler.game.config.GeodeConfig;
 import xyz.nucleoid.plasmid.game.gen.MapGen;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.collection.WeightedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.noise.DoublePerlinNoiseSampler;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.ChunkRandom;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 public class GeodeGen implements MapGen {
-	public static final GeodeGen INSTANCE = new GeodeGen();
+	public static final GeodeGen INSTANCE = new GeodeGen(new GeodeConfig(3, 3, 4, 0.05));
 
 	private static final WeightedList<Block> LIST = new WeightedList<Block>()
 			.add(Blocks.IRON_ORE, 4)
@@ -34,9 +31,20 @@ public class GeodeGen implements MapGen {
 			.add(Blocks.EMERALD_ORE, 1)
 			.add(Blocks.DIAMOND_ORE, 1);
 
+	private final GeodeConfig config;
+
+	private GeodeGen(GeodeConfig config) {
+		this.config = config;
+	}
+
+	public static GeodeGen of(GeodeConfig config) {
+		return new GeodeGen(config);
+	}
+
+
 	@Override
 	public void generate(ServerWorldAccess world, BlockPos pos, Random random) {
-		BlockState state = LIST.pickRandom(random).getDefaultState();
+		BlockState ore = LIST.pickRandom(random).getDefaultState();
 
 		int minGenOffset = -16;
 		int maxGenOffset = 16;
@@ -49,12 +57,12 @@ public class GeodeGen implements MapGen {
 			List<Pair<BlockPos, Integer>> generationPoints = Lists.newLinkedList();
 
 			// Generate distribution points
-			int distributionPoints = 3 + random.nextInt(4);
+			int distributionPoints = this.config.baseSize + random.nextInt(this.config.randomSize);
 
 			DoublePerlinNoiseSampler noiseSampler = DoublePerlinNoiseSampler.method_30846(new ChunkRandom(((ChunkRegion)world).getSeed()), -4, new DoubleArrayList(new double[]{1.0D}));
 
 			List<BlockPos> crackPoints = Lists.newLinkedList();
-			double d = (double) distributionPoints / (double)7;
+			double d = (double) distributionPoints / (double)(this.config.baseSize + this.config.randomSize);
 
 			// Create threshold values for each layer. When the distance is less than this value, the specified layer will be generated
 			double fillingThreshold = 1.0D / Math.sqrt(1.7);
@@ -154,7 +162,7 @@ public class GeodeGen implements MapGen {
 
 						boolean useAlternateInnerLayer = (double)random.nextFloat() < 0.05;
 						if (useAlternateInnerLayer) {
-							world.setBlockState(currentPos, state, 2);
+							world.setBlockState(currentPos, ore, 2);
 						} else {
 							world.setBlockState(currentPos, Blocks.STONE.getDefaultState(), 2);
 						}

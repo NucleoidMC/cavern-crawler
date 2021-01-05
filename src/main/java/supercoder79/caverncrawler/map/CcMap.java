@@ -1,6 +1,6 @@
 package supercoder79.caverncrawler.map;
 
-import supercoder79.caverncrawler.game.CcConfig;
+import supercoder79.caverncrawler.game.config.CcConfig;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -13,6 +13,6 @@ public class CcMap {
 	}
 
 	public ChunkGenerator chunkGenerator(MinecraftServer server) {
-		return new CcChunkGenerator(server);
+		return new CcChunkGenerator(this.config, server);
 	}
 }

@@ -1,12 +1,9 @@
 package supercoder79.caverncrawler.map;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
+import supercoder79.caverncrawler.game.config.CcConfig;
+import supercoder79.caverncrawler.game.config.OreConfig;
 import supercoder79.caverncrawler.map.carver.*;
 import supercoder79.caverncrawler.map.gen.GeodeGen;
 import xyz.nucleoid.plasmid.game.world.generator.GameChunkGenerator;
@@ -35,8 +32,14 @@ import net.minecraft.world.gen.feature.OreFeatureConfig;
 public class CcChunkGenerator extends GameChunkGenerator {
 	private final long seed;
 	private final List<ConfiguredCarver<ProbabilityConfig>> carvers = new ArrayList<>();
-	public CcChunkGenerator(MinecraftServer server) {
+	private final CcConfig config;
+	private final GeodeGen geodes;
+
+	public CcChunkGenerator(CcConfig config, MinecraftServer server) {
 		super(createBiomeSource(server, BiomeKeys.PLAINS), new StructuresConfig(Optional.empty(), Collections.emptyMap()));
+		this.config = config;
+
+		this.geodes = GeodeGen.of(config.geode);
 
 		this.seed = new Random().nextLong();
 		this.carvers.add(CaveCarver.INSTANCE);
@@ -141,7 +144,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			}
 		} else {
 			if (chunkX == 0) {
-				if (Math.abs(chunkZ) <= 3) {
+				if (Math.abs(chunkZ) <= this.config.tunnelLength) {
 					BlockPos.Mutable mutable = new BlockPos.Mutable();
 					for (int x = 7; x <= 8; x++) {
 						mutable.setX(chunkX * 16 + x);
@@ -169,7 +172,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			}
 
 			if (chunkZ == 0) {
-				if (Math.abs(chunkX) <= 3) {
+				if (Math.abs(chunkX) <= this.config.tunnelLength) {
 					BlockPos.Mutable mutable = new BlockPos.Mutable();
 					for (int x = 0; x < 16; x++) {
 						mutable.setX(chunkX * 16 + x);
@@ -212,26 +215,19 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			}
 		}
 
-		if (Math.abs(chunkX) >= 1 && Math.abs(chunkZ) >= 1 && random.nextInt(3) == 0) {
+		if (Math.abs(chunkX) >= 1 && Math.abs(chunkZ) >= 1 && random.nextInt(this.config.geode.chance) == 0) {
 			int x = random.nextInt(16) + (chunkX * 16);
 			int y = random.nextInt(80) + 20;
 			int z = random.nextInt(16) + (chunkZ * 16);
-			GeodeGen.INSTANCE.generate(region, new BlockPos(x, y, z), random);
+			this.geodes.generate(region, new BlockPos(x, y, z), random);
 		}
 
-		generateOre(region, random, 32, 19, Blocks.COAL_ORE.getDefaultState(), chunkX, chunkZ);
-		generateOre(region, random, 24, 11, Blocks.IRON_ORE.getDefaultState(), chunkX, chunkZ);
-		generateOre(region, random, 8, 11, Blocks.GOLD_ORE.getDefaultState(), chunkX, chunkZ);
-		generateOre(region, random, 12, 9, Blocks.REDSTONE_ORE.getDefaultState(), chunkX, chunkZ);
-		generateOre(region, random, 8, 9, Blocks.LAPIS_ORE.getDefaultState(), chunkX, chunkZ);
-		generateOre(region, random, 2, 9, Blocks.DIAMOND_ORE.getDefaultState(), chunkX, chunkZ);
-
-		// Emerald ore
-		for (int i = 0; i < 24; i++) {
-			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(128);
-			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.EMERALD_ORE.generate(region, this, random, new BlockPos(x, y, z), new EmeraldOreFeatureConfig(Blocks.STONE.getDefaultState(), Blocks.EMERALD_ORE.getDefaultState()));
+		for (OreConfig ore : this.config.ores) {
+			if (!ore.emeraldGeneration) {
+				generateOre(region, random, ore.count, ore.size, ore.state, chunkX, chunkZ);
+			} else {
+				generateEmeraldOre(region, random, ore.count, ore.size, ore.state, chunkX, chunkZ);
+			}
 		}
 	}
 
@@ -241,6 +237,15 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			int y = random.nextInt(128);
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, state, size));
+		}
+	}
+
+	private void generateEmeraldOre(ChunkRegion region, Random random, int count, int size, BlockState state, int chunkX, int chunkZ) {
+		for (int i = 0; i < count; i++) {
+			int x = random.nextInt(16) + (chunkX * 16);
+			int y = random.nextInt(128);
+			int z = random.nextInt(16) + (chunkZ * 16);
+			Feature.EMERALD_ORE.generate(region, this, random, new BlockPos(x, y, z), new EmeraldOreFeatureConfig(Blocks.STONE.getDefaultState(), state));
 		}
 	}
 }

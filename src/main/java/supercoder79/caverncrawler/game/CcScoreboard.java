@@ -1,15 +1,14 @@
 package supercoder79.caverncrawler.game;
 
+import java.util.Map;
+
+import xyz.nucleoid.plasmid.widget.GlobalWidgets;
+import xyz.nucleoid.plasmid.widget.SidebarWidget;
+
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import xyz.nucleoid.plasmid.widget.GlobalWidgets;
-import xyz.nucleoid.plasmid.widget.SidebarWidget;
-
-import java.util.Comparator;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CcScoreboard {
     private final SidebarWidget sidebar;

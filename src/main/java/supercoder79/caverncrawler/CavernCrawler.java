@@ -1,8 +1,8 @@
 package supercoder79.caverncrawler;
 
 import supercoder79.caverncrawler.command.PointsCommand;
-import supercoder79.caverncrawler.game.CcConfig;
 import supercoder79.caverncrawler.game.CcWaiting;
+import supercoder79.caverncrawler.game.config.CcConfig;
 import xyz.nucleoid.plasmid.game.GameType;
 
 import net.minecraft.util.Identifier;

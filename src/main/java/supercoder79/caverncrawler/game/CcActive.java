@@ -1,9 +1,9 @@
 package supercoder79.caverncrawler.game;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import supercoder79.caverncrawler.game.config.CcConfig;
 import supercoder79.caverncrawler.map.CcMap;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
 import xyz.nucleoid.plasmid.game.GameSpace;
