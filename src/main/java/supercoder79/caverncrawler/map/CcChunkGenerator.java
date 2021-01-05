@@ -121,8 +121,8 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			for (int x = 0; x < 16; x++) {
 				mutable.setX(chunkX * 16 + x);
 
-			    for (int z = 0; z < 16; z++) {
-			    	mutable.setZ(chunkZ * 16 + z);
+				for (int z = 0; z < 16; z++) {
+					mutable.setZ(chunkZ * 16 + z);
 
 					for (int y = 48; y <= 56; y++) {
 						mutable.setY(y);
@@ -137,7 +137,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 							region.setBlockState(mutable, Blocks.STONE.getDefaultState(), 3);
 						}
 					}
-			    }
+				}
 			}
 		} else {
 			if (chunkX == 0) {
@@ -219,52 +219,28 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			GeodeGen.INSTANCE.generate(region, new BlockPos(x, y, z), random);
 		}
 
-		// TODO: refactor this hot mess
+		generateOre(region, random, 32, 19, Blocks.COAL_ORE.getDefaultState(), chunkX, chunkZ);
+		generateOre(region, random, 24, 11, Blocks.IRON_ORE.getDefaultState(), chunkX, chunkZ);
+		generateOre(region, random, 8, 11, Blocks.GOLD_ORE.getDefaultState(), chunkX, chunkZ);
+		generateOre(region, random, 12, 9, Blocks.REDSTONE_ORE.getDefaultState(), chunkX, chunkZ);
+		generateOre(region, random, 8, 9, Blocks.LAPIS_ORE.getDefaultState(), chunkX, chunkZ);
+		generateOre(region, random, 2, 9, Blocks.DIAMOND_ORE.getDefaultState(), chunkX, chunkZ);
+
+		// Emerald ore
 		for (int i = 0; i < 24; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(116) + 8;
-			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.COAL_ORE.getDefaultState(), 17));
-		}
-
-		for (int i = 0; i < 16; i++) {
-			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(116) + 8;
-			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.IRON_ORE.getDefaultState(), 9));
-		}
-
-		for (int i = 0; i < 5; i++) {
-			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(116) + 8;
-			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.GOLD_ORE.getDefaultState(), 9));
-		}
-
-		for (int i = 0; i < 10; i++) {
-			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(116) + 8;
-			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.REDSTONE_ORE.getDefaultState(), 8));
-		}
-
-		for (int i = 0; i < 5; i++) {
-			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(116) + 8;
-			int z = random.nextInt(16) + (chunkZ * 16);
-			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.LAPIS_ORE.getDefaultState(), 7));
-		}
-
-		for (int i = 0; i < 4 + random.nextInt(8); i++) {
-			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(116) + 8;
+			int y = random.nextInt(128);
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.EMERALD_ORE.generate(region, this, random, new BlockPos(x, y, z), new EmeraldOreFeatureConfig(Blocks.STONE.getDefaultState(), Blocks.EMERALD_ORE.getDefaultState()));
 		}
+	}
 
-		int x = random.nextInt(16) + (chunkX * 16);
-		int y = random.nextInt(116) + 8;
-		int z = random.nextInt(16) + (chunkZ * 16);
-		Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, Blocks.DIAMOND_ORE.getDefaultState(), 8));
+	private void generateOre(ChunkRegion region, Random random, int count, int size, BlockState state, int chunkX, int chunkZ) {
+		for (int i = 0; i < count; i++) {
+			int x = random.nextInt(16) + (chunkX * 16);
+			int y = random.nextInt(128);
+			int z = random.nextInt(16) + (chunkZ * 16);
+			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, state, size));
+		}
 	}
 }
