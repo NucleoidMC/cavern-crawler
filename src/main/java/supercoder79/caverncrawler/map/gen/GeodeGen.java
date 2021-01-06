@@ -160,7 +160,7 @@ public class GeodeGen implements MapGen {
 					} else if (generationDistance >= innerLayerThreshold) {
 						// Generate inner layer, or use alternate inner layer (ore block) if the chance check succeeds.
 
-						boolean useAlternateInnerLayer = (double)random.nextFloat() < 0.05;
+						boolean useAlternateInnerLayer = (double)random.nextFloat() < this.config.oreChance;
 						if (useAlternateInnerLayer) {
 							world.setBlockState(currentPos, ore, 2);
 						} else {
