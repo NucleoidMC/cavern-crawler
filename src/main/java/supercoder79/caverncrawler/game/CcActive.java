@@ -108,7 +108,7 @@ public class CcActive {
 		for (int x = -1; x <= 16; x++) {
 			for (int z = -1; z <= 16; z++) {
 				if (x == -1 || x == 16 || z == -1 || z == 16) {
-					for (int y = 57; y <= 60; y++) {
+					for (int y = 117; y <= 120; y++) {
 						BlockPos local = new BlockPos(x, y, z);
 						if (space.getWorld().getBlockState(local).isOf(Blocks.BARRIER)) {
 							space.getWorld().setBlockState(local, Blocks.AIR.getDefaultState(), 3);

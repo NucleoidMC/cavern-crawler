@@ -85,7 +85,7 @@ public final class CcWaiting {
 		ChunkPos chunkPos = new ChunkPos(0, 0);
 		world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
 
-		player.teleport(world, 8, 59, 8, 0.0F, 0.0F);
+		player.teleport(world, 8, 119, 8, 0.0F, 0.0F);
 	}
 
 	public static void resetPlayer(ServerPlayerEntity player, GameMode mode) {

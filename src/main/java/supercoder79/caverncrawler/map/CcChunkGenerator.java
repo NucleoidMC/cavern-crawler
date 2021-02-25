@@ -13,6 +13,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.BiomeKeys;
@@ -34,12 +35,14 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	private final List<ConfiguredCarver<ProbabilityConfig>> carvers = new ArrayList<>();
 	private final CcConfig config;
 	private final GeodeGen geodes;
+	private final CaveGenerator caves;
 
 	public CcChunkGenerator(CcConfig config, MinecraftServer server) {
 		super(createBiomeSource(server, BiomeKeys.PLAINS), new StructuresConfig(Optional.empty(), Collections.emptyMap()));
 		this.config = config;
 
 		this.geodes = GeodeGen.of(config.geode);
+		this.caves = new CaveGenerator(new Random(), 0);
 
 		this.seed = new Random().nextLong();
 		this.carvers.add(CaveCarver.INSTANCE);
@@ -57,35 +60,90 @@ public class CcChunkGenerator extends GameChunkGenerator {
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
 		Random random = new Random();
 
-		for (int x = 0; x < 16; x++) {
-			mutable.setX(x);
+		double[][][] noise = new double[5][5][33];
 
-		    for (int z = 0; z < 16; z++) {
-				mutable.setZ(z);
+		for (int noiseX = 0; noiseX <= 4; noiseX++) {
+			for (int noiseZ = 0; noiseZ <= 4; noiseZ++) {
+				for (int noiseY = 0; noiseY <= 32; noiseY++) {
+					double sample = this.caves.sample((noiseX + pos.x * 4) * 4, noiseY * 8, (noiseZ + pos.z * 4) * 4);
 
-				for (int y = 0; y < 128; y++) {
-					mutable.setY(y);
-
-					BlockState state = Blocks.STONE.getDefaultState();
-					if (y == 0 || y == 127) {
-						state = Blocks.BEDROCK.getDefaultState();
+					if (noiseY > 28) {
+						sample = MathHelper.lerp((33 - noiseY) / 4.0, sample, 10);
 					}
 
-					if (isSpawn && (y > 56 && y < 64)) {
-						state = Blocks.AIR.getDefaultState();
+					if (noiseY < 4) {
+						sample  = MathHelper.lerp((4 - noiseY) / 4.0, sample, 10);
 					}
 
-					// TODO: glowstone on sides of walls
-					if (isSpawn && (y == 56 || y == 64)) {
-						if (random.nextInt(5) == 0) {
-							state = Blocks.GLOWSTONE.getDefaultState();
+					noise[noiseX][noiseZ][noiseY] = sample;
+				}
+			}
+		}
+
+		for (int noiseX = 0; noiseX < 4; noiseX++) {
+			for (int noiseZ = 0; noiseZ < 4; noiseZ++) {
+				for (int noiseY = 0; noiseY < 32; noiseY++) {
+					double x0z0y0 = noise[noiseX][noiseZ][noiseY];
+					double x0z1y0 = noise[noiseX][noiseZ + 1][noiseY];
+					double x1z0y0 = noise[noiseX + 1][noiseZ][noiseY];
+					double x1z1y0 = noise[noiseX + 1][noiseZ + 1][noiseY];
+					double x0z0y1 = noise[noiseX][noiseZ][noiseY + 1];
+					double x0z1y1 = noise[noiseX][noiseZ + 1][noiseY + 1];
+					double x1z0y1 = noise[noiseX + 1][noiseZ][noiseY + 1];
+					double x1z1y1 = noise[noiseX + 1][noiseZ + 1][noiseY + 1];
+
+					for (int pieceY = 0; pieceY < 8; pieceY++) {
+						double progressY = pieceY / 8.0;
+
+						double x0z0 = MathHelper.lerp(progressY, x0z0y0, x0z0y1);
+						double x0z1 = MathHelper.lerp(progressY, x0z1y0, x0z1y1);
+						double x1z0 = MathHelper.lerp(progressY, x1z0y0, x1z0y1);
+						double x1z1 = MathHelper.lerp(progressY, x1z1y0, x1z1y1);
+
+						for (int pieceX = 0; pieceX < 4; pieceX++) {
+							double progressX = pieceX / 4.0;
+							double z0 = MathHelper.lerp(progressX, x0z0, x1z0);
+							double z1 = MathHelper.lerp(progressX, x0z1, x1z1);
+
+							for (int pieceZ = 0; pieceZ < 4; pieceZ++) {
+								double progressZ = pieceZ / 4.0;
+
+								double density = MathHelper.lerp(progressZ, z0, z1);
+
+								mutable.set(noiseX * 4 + pieceX, noiseY * 8 + pieceY, noiseZ * 4 + pieceZ);
+
+								chunk.setBlockState(mutable, getBlockState(isSpawn, mutable.getY(), random, density), false);
+							}
 						}
 					}
-
-					chunk.setBlockState(mutable, state, false);
 				}
-		    }
+			}
 		}
+	}
+
+	private static BlockState getBlockState(boolean isSpawn, int y, Random random, double density) {
+		BlockState state = density > 0 ? Blocks.STONE.getDefaultState() : Blocks.CAVE_AIR.getDefaultState();
+
+		if (state.isAir() && y < 11) {
+			state = Blocks.LAVA.getDefaultState();
+		}
+
+		if (y == 0 || y == 255) {
+			state = Blocks.BEDROCK.getDefaultState();
+		}
+
+		if (isSpawn && (y > 116 && y < 124)) {
+			state = Blocks.AIR.getDefaultState();
+		}
+
+		// TODO: glowstone on sides of walls
+		if (isSpawn && (y == 116 || y == 124)) {
+			if (random.nextInt(5) == 0) {
+				state = Blocks.GLOWSTONE.getDefaultState();
+			}
+		}
+
+		return state;
 	}
 
 	@Override
@@ -127,14 +185,14 @@ public class CcChunkGenerator extends GameChunkGenerator {
 				for (int z = 0; z < 16; z++) {
 					mutable.setZ(chunkZ * 16 + z);
 
-					for (int y = 48; y <= 56; y++) {
+					for (int y = 108; y <= 116; y++) {
 						mutable.setY(y);
 						if (region.getBlockState(mutable).isAir()) {
 							region.setBlockState(mutable, Blocks.STONE.getDefaultState(), 3);
 						}
 					}
 
-					for (int y = 64; y <= 72; y++) {
+					for (int y = 124; y <= 132; y++) {
 						mutable.setY(y);
 						if (region.getBlockState(mutable).isAir()) {
 							region.setBlockState(mutable, Blocks.STONE.getDefaultState(), 3);
@@ -152,11 +210,11 @@ public class CcChunkGenerator extends GameChunkGenerator {
 						for (int z = 0; z < 16; z++) {
 							mutable.setZ(chunkZ * 16 + z);
 
-							for (int y = 57; y <= 60; y++) {
+							for (int y = 117; y <= 120; y++) {
 								mutable.setY(y);
 								BlockState state = Blocks.AIR.getDefaultState();
 
-								if (y == 60 && region.getBlockState(mutable).isOpaque()) {
+								if (y == 120 && region.getBlockState(mutable).isOpaque()) {
 									state = Blocks.STONE.getDefaultState();
 
 									if (random.nextInt(6) == 0) {
@@ -180,11 +238,11 @@ public class CcChunkGenerator extends GameChunkGenerator {
 						for (int z = 7; z <= 8; z++) {
 							mutable.setZ(chunkZ * 16 + z);
 
-							for (int y = 57; y <= 60; y++) {
+							for (int y = 117; y <= 120; y++) {
 								mutable.setY(y);
 								BlockState state = Blocks.AIR.getDefaultState();
 
-								if (y == 60 && region.getBlockState(mutable).isOpaque()) {
+								if (y == 120 && region.getBlockState(mutable).isOpaque()) {
 									state = Blocks.STONE.getDefaultState();
 
 									if (random.nextInt(6) == 0) {
@@ -204,7 +262,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			for (int x = -1; x <= 16; x++) {
 				for (int z = -1; z <= 16; z++) {
 					if (x == -1 || x == 16 || z == -1 || z == 16) {
-						for (int y = 57; y <= 60; y++) {
+						for (int y = 117; y <= 120; y++) {
 							BlockPos local = new BlockPos(x, y, z);
 							if (region.getBlockState(local).isAir()) {
 								region.setBlockState(local, Blocks.BARRIER.getDefaultState(), 3);
@@ -217,7 +275,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 
 		if (Math.abs(chunkX) >= 1 && Math.abs(chunkZ) >= 1 && random.nextInt(this.config.geode.chance) == 0) {
 			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(80) + 20;
+			int y = random.nextInt(220) + 20;
 			int z = random.nextInt(16) + (chunkZ * 16);
 			this.geodes.generate(region, new BlockPos(x, y, z), random);
 		}
@@ -234,7 +292,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	private void generateOre(ChunkRegion region, Random random, int count, int size, BlockState state, int chunkX, int chunkZ) {
 		for (int i = 0; i < count; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(128);
+			int y = random.nextInt(256);
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.ORE.generate(region, this, random, new BlockPos(x, y, z), new OreFeatureConfig(OreFeatureConfig.Rules.BASE_STONE_OVERWORLD, state, size));
 		}
@@ -243,7 +301,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	private void generateEmeraldOre(ChunkRegion region, Random random, int count, int size, BlockState state, int chunkX, int chunkZ) {
 		for (int i = 0; i < count; i++) {
 			int x = random.nextInt(16) + (chunkX * 16);
-			int y = random.nextInt(128);
+			int y = random.nextInt(256);
 			int z = random.nextInt(16) + (chunkZ * 16);
 			Feature.EMERALD_ORE.generate(region, this, random, new BlockPos(x, y, z), new EmeraldOreFeatureConfig(Blocks.STONE.getDefaultState(), state));
 		}

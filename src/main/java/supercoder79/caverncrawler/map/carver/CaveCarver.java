@@ -13,7 +13,7 @@ import net.minecraft.world.gen.carver.Carver;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 public class CaveCarver extends Carver<ProbabilityConfig> {
-	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new CaveCarver(), new ProbabilityConfig(1 / 6.f));
+	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new CaveCarver(), new ProbabilityConfig(1 / 4.f));
 	public CaveCarver() {
 		super(ProbabilityConfig.CODEC, 256);
 	}
@@ -63,7 +63,7 @@ public class CaveCarver extends Carver<ProbabilityConfig> {
 	}
 
 	protected int getCaveY(Random random) {
-		return random.nextInt(random.nextInt(120) + 8);
+		return random.nextInt(256);
 	}
 
 	protected void carveTunnels(Chunk chunk, Function<BlockPos, Biome> postToBiome, long seed, int seaLevel, int mainChunkX, int mainChunkZ, double x, double y, double z, float width, float yaw, float pitch, int branchStartIndex, int branchCount, double yawPitchRatio, BitSet carvingMask) {

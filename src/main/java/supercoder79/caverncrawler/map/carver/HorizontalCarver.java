@@ -13,7 +13,7 @@ import net.minecraft.world.gen.carver.Carver;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 public class HorizontalCarver extends Carver<ProbabilityConfig> {
-	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new HorizontalCarver(), new ProbabilityConfig(1.f / 15.f));
+	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new HorizontalCarver(), new ProbabilityConfig(1.f / 7.f));
 
 	public HorizontalCarver() {
 		super(ProbabilityConfig.CODEC, 256);
@@ -22,7 +22,7 @@ public class HorizontalCarver extends Carver<ProbabilityConfig> {
 	@Override
 	public boolean carve(Chunk chunk, Function<BlockPos, Biome> posToBiome, Random random, int seaLevel, int chunkX, int chunkZ, int mainChunkX, int mainChunkZ, BitSet carvingMask, ProbabilityConfig carverConfig) {
 		double x = (chunkX * 16 + random.nextInt(16));
-		double y = random.nextInt(80) + 8;
+		double y = random.nextInt(250) + 8;
 		double z = (chunkZ * 16 + random.nextInt(16));
 		float yaw = 8.0F + random.nextFloat() * 3.5F;
 		float pitch = yaw * 0.4f * (random.nextFloat() + 0.65f);

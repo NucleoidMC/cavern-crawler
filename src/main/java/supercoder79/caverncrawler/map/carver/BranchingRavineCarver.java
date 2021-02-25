@@ -28,7 +28,7 @@ public class BranchingRavineCarver extends Carver<ProbabilityConfig> {
    public boolean carve(Chunk chunk, Function<BlockPos, Biome> function, Random random, int seaLevel, int chunkX, int chunkZ, int mainChunkX, int mainChunkZ, BitSet bitSet, ProbabilityConfig probabilityConfig) {
       int branchingFactor = (this.getBranchFactor() * 2 - 1) * 16;
       double x = chunkX * 16 + random.nextInt(16);
-      double y = 8 + random.nextInt(100);
+      double y = 8 + random.nextInt(250);
       double z = chunkZ * 16 + random.nextInt(16);
       float yaw = (float) (random.nextFloat() * 6.2831855F + (Math.PI / 3.0f));
       float pitch = (random.nextFloat() - 0.5F) * 2.0F / 8.0F;

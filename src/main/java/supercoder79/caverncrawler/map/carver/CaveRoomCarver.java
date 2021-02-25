@@ -12,7 +12,7 @@ import net.minecraft.world.gen.carver.Carver;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 
 public class CaveRoomCarver extends Carver<ProbabilityConfig> {
-	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new CaveRoomCarver(), new ProbabilityConfig(1.f / 25.f));
+	public static ConfiguredCarver<ProbabilityConfig> INSTANCE = new ConfiguredCarver<>(new CaveRoomCarver(), new ProbabilityConfig(1.f / 12.f));
 
 	public CaveRoomCarver() {
 		super(ProbabilityConfig.CODEC, 256);
@@ -21,7 +21,7 @@ public class CaveRoomCarver extends Carver<ProbabilityConfig> {
 	@Override
 	public boolean carve(Chunk chunk, Function<BlockPos, Biome> posToBiome, Random random, int seaLevel, int chunkX, int chunkZ, int mainChunkX, int mainChunkZ, BitSet carvingMask, ProbabilityConfig carverConfig) {
 		double x = chunkX * 16 + random.nextInt(16);
-		double y = random.nextInt(50) + 40;
+		double y = random.nextInt(200) + 40;
 		double z = chunkZ * 16 + random.nextInt(16);
 
 		double yaw = random.nextDouble() * 8 + 12;
