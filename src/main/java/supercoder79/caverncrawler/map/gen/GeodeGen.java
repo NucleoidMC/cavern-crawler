@@ -46,8 +46,8 @@ public class GeodeGen implements MapGen {
 	public void generate(ServerWorldAccess world, BlockPos pos, Random random) {
 		BlockState ore = LIST.pickRandom(random).getDefaultState();
 
-		int minGenOffset = -16;
-		int maxGenOffset = 16;
+		int minGenOffset = -24;
+		int maxGenOffset = 24;
 
 		// Return if there is water here, to not generate in oceans.
 		if (world.getFluidState(pos.add(0, maxGenOffset / 3, 0)).isStill()) {
