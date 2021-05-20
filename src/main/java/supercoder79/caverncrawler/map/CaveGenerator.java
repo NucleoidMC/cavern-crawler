@@ -31,8 +31,6 @@ public class CaveGenerator {
 		return DoublePerlinNoiseSampler.method_30846(random, startingOctave, new DoubleArrayList(octaves));
 	}
 
-	
-
 	public CaveGenerator(Random random, int minY) {
 		this.minY = minY;
 		this.verticalAdditionNoise = create(new ChunkRandom(random.nextLong()), -7, 1.0, 1.0);

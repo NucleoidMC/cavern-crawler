@@ -3,6 +3,9 @@ package supercoder79.caverncrawler.game;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.server.world.ChunkTicketType;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.math.ChunkPos;
 import supercoder79.caverncrawler.game.config.CcConfig;
 import supercoder79.caverncrawler.map.CcMap;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
@@ -76,7 +79,7 @@ public class CcActive {
 			game.on(BreakBlockListener.EVENT, active::onBreak);
 			game.on(UseBlockListener.EVENT, active::onUseBlock);
 
-			game.on(PlayerDamageListener.EVENT, active::onDamage);
+			game.on(PlayerDeathListener.EVENT, active::onDeath);
 
 			game.on(GameCloseListener.EVENT, active::onClose);
 
@@ -119,6 +122,24 @@ public class CcActive {
 		}
 	}
 
+	private ActionResult onDeath(ServerPlayerEntity player, DamageSource source) {
+		this.participants.sendMessage(source.getDeathMessage(player).copy().formatted(Formatting.RED));
+		ServerWorld world = this.space.getWorld();
+
+		ChunkPos chunkPos = new ChunkPos(0, 0);
+		world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
+
+		player.teleport(world, 8, 119, 8, 0.0F, 0.0F);
+		player.setFireTicks(0);
+
+		int points = this.pointMap.getOrDefault(player, 0);
+		int reduced = (int) (points * 0.75);
+		this.pointMap.put(player, reduced);
+		player.sendMessage(new LiteralText("You lost " + (points - reduced) + " points!").formatted(Formatting.DARK_RED), false);
+
+		return ActionResult.FAIL;
+	}
+
 	private void tick() {
 		this.ticks++;
 
@@ -152,10 +173,6 @@ public class CcActive {
 		} else {
 			this.scoreboard.update(this.endingTick - this.ticks, this.pointMap);
 		}
-	}
-
-	ActionResult onDamage(ServerPlayerEntity player, DamageSource source, float amount) {
-		return ActionResult.FAIL;
 	}
 
 	private ActionResult onUseBlock(ServerPlayerEntity playerEntity, Hand hand, BlockHitResult hitResult) {

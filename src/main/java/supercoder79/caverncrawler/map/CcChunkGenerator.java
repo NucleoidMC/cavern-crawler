@@ -36,6 +36,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	private final CcConfig config;
 	private final GeodeGen geodes;
 	private final CaveGenerator caves;
+	private final WindingCaveGenerator windingCaves;
 
 	public CcChunkGenerator(CcConfig config, MinecraftServer server) {
 		super(createBiomeSource(server, BiomeKeys.PLAINS), new StructuresConfig(Optional.empty(), Collections.emptyMap()));
@@ -43,6 +44,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 
 		this.geodes = GeodeGen.of(config.geode);
 		this.caves = new CaveGenerator(new Random(), 0);
+		this.windingCaves = new WindingCaveGenerator(new Random());
 
 		this.seed = new Random().nextLong();
 		this.carvers.add(CaveCarver.INSTANCE);
@@ -56,6 +58,8 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	public void populateNoise(WorldAccess world, StructureAccessor structures, Chunk chunk) {
 		ChunkPos pos = chunk.getPos();
 		boolean isSpawn = Math.abs(pos.x) == 0 && Math.abs(pos.z) == 0;
+		int startX = pos.x * 16;
+		int startZ = pos.z * 16;
 
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
 		Random random = new Random();
@@ -72,7 +76,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 					}
 
 					if (noiseY < 4) {
-						sample  = MathHelper.lerp((4 - noiseY) / 4.0, sample, 10);
+						sample = MathHelper.lerp((4 - noiseY) / 4.0, sample, 10);
 					}
 
 					noise[noiseX][noiseZ][noiseY] = sample;
@@ -112,7 +116,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 
 								mutable.set(noiseX * 4 + pieceX, noiseY * 8 + pieceY, noiseZ * 4 + pieceZ);
 
-								chunk.setBlockState(mutable, getBlockState(isSpawn, mutable.getY(), random, density), false);
+								chunk.setBlockState(mutable, getBlockState(isSpawn, mutable.getX() + startX, mutable.getZ() + startZ, mutable.getY(), random, density), false);
 							}
 						}
 					}
@@ -121,8 +125,17 @@ public class CcChunkGenerator extends GameChunkGenerator {
 		}
 	}
 
-	private static BlockState getBlockState(boolean isSpawn, int y, Random random, double density) {
-		BlockState state = density > 0 ? Blocks.STONE.getDefaultState() : Blocks.CAVE_AIR.getDefaultState();
+	private BlockState getBlockState(boolean isSpawn, int x, int z, int y, Random random, double density) {
+		BlockState state;
+		if (density > 0) {
+			if (this.windingCaves.shouldCarve(x, y, z)) {
+				state = Blocks.CAVE_AIR.getDefaultState();
+			} else {
+				state = Blocks.STONE.getDefaultState();
+			}
+		} else {
+			state = Blocks.CAVE_AIR.getDefaultState();
+		}
 
 		if (state.isAir() && y < 11) {
 			state = Blocks.LAVA.getDefaultState();
@@ -138,6 +151,10 @@ public class CcChunkGenerator extends GameChunkGenerator {
 
 		// TODO: glowstone on sides of walls
 		if (isSpawn && (y == 116 || y == 124)) {
+			if (y == 116 && (Math.abs(x - 8) <= 3 && Math.abs(z - 8) <= 3)) {
+				return Blocks.BEDROCK.getDefaultState();
+			}
+
 			if (random.nextInt(5) == 0) {
 				state = Blocks.GLOWSTONE.getDefaultState();
 			}
