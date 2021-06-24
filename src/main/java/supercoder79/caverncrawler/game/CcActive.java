@@ -6,6 +6,7 @@ import java.util.Map;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.ChunkPos;
+import supercoder79.caverncrawler.CavernCrawler;
 import supercoder79.caverncrawler.game.config.CcConfig;
 import supercoder79.caverncrawler.map.CcMap;
 import xyz.nucleoid.plasmid.game.GameCloseReason;
@@ -72,6 +73,7 @@ public class CcActive {
 			game.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
 			game.setRule(GameRule.HUNGER, RuleResult.DENY);
 			game.setRule(GameRule.THROW_ITEMS, RuleResult.DENY);
+			game.setRule(CavernCrawler.NO_ICE_MELT, RuleResult.ALLOW);
 
 			game.on(GameOpenListener.EVENT, active::open);
 			game.on(OfferPlayerListener.EVENT, player -> JoinResult.ok());

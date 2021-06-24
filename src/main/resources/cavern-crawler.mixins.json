@@ -4,6 +4,7 @@
   "package": "supercoder79.caverncrawler.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinIceBlock"
   ],
   "client": [
   ],

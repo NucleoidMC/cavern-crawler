@@ -37,6 +37,7 @@ public class CcChunkGenerator extends GameChunkGenerator {
 	private final GeodeGen geodes;
 	private final CaveGenerator caves;
 	private final WindingCaveGenerator windingCaves;
+	private final CaveBiomeGenerator biomes;
 
 	public CcChunkGenerator(CcConfig config, MinecraftServer server) {
 		super(createBiomeSource(server, BiomeKeys.PLAINS), new StructuresConfig(Optional.empty(), Collections.emptyMap()));
@@ -52,6 +53,8 @@ public class CcChunkGenerator extends GameChunkGenerator {
 		this.carvers.add(HorizontalCarver.INSTANCE);
 		this.carvers.add(BranchingRavineCarver.INSTANCE);
 		this.carvers.add(VerticalCarver.INSTANCE);
+
+		this.biomes = new CaveBiomeGenerator(seed);
 	}
 
 	@Override
@@ -193,6 +196,22 @@ public class CcChunkGenerator extends GameChunkGenerator {
 		int chunkZ = region.getCenterChunkZ();
 
 		Random random = new Random();
+
+		BlockPos.Mutable checkMutable = new BlockPos.Mutable();
+		List<BlockPos> positions = new ArrayList<>();
+		for (int x1 = 0; x1 < 16; x1++) {
+			for (int z1 = 0; z1 < 16; z1++) {
+				for (int y1 = 0; y1 < 256; y1++) {
+					checkMutable.set(x1 + chunkX * 16, y1, z1 + chunkZ * 16);
+
+					if (region.getBlockState(checkMutable).isAir()) {
+						positions.add(checkMutable.toImmutable());
+					}
+				}
+			}
+		}
+
+		this.biomes.generate(region, random, positions);
 
 		if (chunkX == 0 && chunkZ == 0) {
 			BlockPos.Mutable mutable = new BlockPos.Mutable();

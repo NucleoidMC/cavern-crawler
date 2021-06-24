@@ -1,5 +1,6 @@
 package supercoder79.caverncrawler.game;
 
+import supercoder79.caverncrawler.CavernCrawler;
 import supercoder79.caverncrawler.game.config.CcConfig;
 import supercoder79.caverncrawler.map.CcMap;
 import supercoder79.caverncrawler.map.CcMapGenerator;
@@ -55,6 +56,7 @@ public final class CcWaiting {
 			game.setRule(GameRule.BLOCK_DROPS, RuleResult.DENY);
 			game.setRule(GameRule.HUNGER, RuleResult.DENY);
 			game.setRule(GameRule.FALL_DAMAGE, RuleResult.DENY);
+			game.setRule(CavernCrawler.NO_ICE_MELT, RuleResult.ALLOW);
 
 			game.on(RequestStartListener.EVENT, waiting::requestStart);
 

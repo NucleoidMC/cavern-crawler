@@ -8,8 +8,11 @@ import xyz.nucleoid.plasmid.game.GameType;
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.ModInitializer;
+import xyz.nucleoid.plasmid.game.rule.GameRule;
 
 public class CavernCrawler implements ModInitializer {
+	public static final GameRule NO_ICE_MELT = new GameRule();
+
 	@Override
 	public void onInitialize() {
 		GameType.register(
