@@ -9,4 +9,6 @@ import java.util.Random;
 public interface CaveBiome {
     Direction[] DIRECTIONS = Direction.values();
     void generate(ChunkRegion world, Random random, BlockPos pos);
+
+    int getColor();
 }

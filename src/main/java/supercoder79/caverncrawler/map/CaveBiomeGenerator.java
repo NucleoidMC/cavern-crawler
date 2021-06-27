@@ -21,10 +21,15 @@ public final class CaveBiomeGenerator {
         this.picker.add(new ShroomCaveBiome(seed), new Vec3d(0.1, -0.2, -0.02));
         this.picker.add(new IceCaveBiome(seed), new Vec3d(-0.1, 0.05, -0.05));
     }
+
     public void generate(ChunkRegion world, Random random, List<BlockPos> positions) {
         for (BlockPos pos : positions) {
             // TODO: optimize
             this.picker.pick(pos).generate(world, random, pos);
         }
+    }
+
+    public CaveBiomePicker getPicker() {
+        return picker;
     }
 }

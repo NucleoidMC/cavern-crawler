@@ -45,4 +45,9 @@ public final class ShroomCaveBiome implements CaveBiome {
             }
         }
     }
+
+    @Override
+    public int getColor() {
+        return 0xd9b445;
+    }
 }

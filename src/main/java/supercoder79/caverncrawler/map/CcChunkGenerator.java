@@ -342,4 +342,8 @@ public class CcChunkGenerator extends GameChunkGenerator {
 			Feature.EMERALD_ORE.generate(region, this, random, new BlockPos(x, y, z), new EmeraldOreFeatureConfig(Blocks.STONE.getDefaultState(), state));
 		}
 	}
+
+	public CaveBiomeGenerator getBiomes() {
+		return biomes;
+	}
 }

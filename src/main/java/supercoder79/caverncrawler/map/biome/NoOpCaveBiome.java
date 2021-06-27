@@ -5,9 +5,14 @@ import net.minecraft.world.ChunkRegion;
 
 import java.util.Random;
 
-public class NoOpCaveBiome implements CaveBiome{
+public class NoOpCaveBiome implements CaveBiome {
     @Override
     public void generate(ChunkRegion world, Random random, BlockPos pos) {
 
+    }
+
+    @Override
+    public int getColor() {
+        return 0x616e75;
     }
 }
